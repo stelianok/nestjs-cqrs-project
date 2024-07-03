@@ -15,22 +15,23 @@ export class AppService {
 
   async seed() {
     await this.dataSource.transaction(async (db) => {
-      const ceo = db.create(Employee, {
-        name: 'Mr. CEO',
-      });
-
-      await db.save(ceo);
-
       const contactInfo = db.create(ContactInfo, {
         email: 'ceo@acme.com',
-        employee: ceo,
       })
 
       await db.save(contactInfo);
 
+      const ceo = db.create(Employee, {
+        name: 'Mr. CEO',
+        contactInfo: contactInfo,
+      });
+
+      await db.save(ceo);
+
       const manager = db.create(Employee, {
         name: 'Manager',
-        manager: ceo
+        manager: ceo,
+        contactInfo: db.create(ContactInfo, {})
       });
 
       await db.save(manager);
