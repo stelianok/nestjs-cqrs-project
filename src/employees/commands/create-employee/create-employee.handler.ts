@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
-import { CreateEmployeeCommand } from "./create-employee-command";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import { ContactInfo } from "src/employees/entities/contact-info.entity";
 import { Employee } from "src/employees/entities/employee.entity";
+import { CreateEmployeeCommand } from "./create-employee.command";
 
 @CommandHandler(CreateEmployeeCommand)
 export class CreateEmployeeHandler implements ICommandHandler<CreateEmployeeCommand, number> {

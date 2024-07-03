@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, NotFoundException } from '@nestjs/common';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { plainToClass } from 'class-transformer';
 import { GetEmployeeQuery } from './queries/get-employee/get-employee.query';
-import { CreateEmployeeCommand } from './commands/create-employee/create-employee-command';
 import { CreateEmployeeDto } from './commands/create-employee/create-employee.dto';
+import { CreateEmployeeCommand } from './commands/create-employee/create-employee.command';
+import { UpdateEmployeeDto } from './commands/update-employee/update-employee.dto';
+import { UpdateEmployeeCommand } from './commands/update-employee/update-employee.command';
 
 @Controller('employees')
 export class EmployeesController {
@@ -34,8 +35,19 @@ export class EmployeesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateEmployeeDto) {
-    return null;
+  async update(@Param('id') id: string, @Body() dto: UpdateEmployeeDto) {
+    const command = plainToClass(UpdateEmployeeCommand, {
+      ...dto,
+      id: Number(id),
+    });
+
+    const affectedRows = await this.commandBus.execute(command);
+
+    if (!affectedRows) throw new NotFoundException();
+
+    const query = plainToClass(GetEmployeeQuery, { id });
+
+    return this.queryBus.execute(query);
   }
 
 }
