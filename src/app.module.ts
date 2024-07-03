@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Meeting } from './entities/meeting.entity';
 import { EmployeesModule } from './employees/employees.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { EmployeesModule } from './employees/employees.module';
       logging: true,
     }),
     TypeOrmModule.forFeature([Task, Meeting]),
-    EmployeesModule
+    EmployeesModule,
+    ReportsModule
   ],
   controllers: [],
   providers: [AppService],
