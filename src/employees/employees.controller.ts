@@ -1,17 +1,25 @@
 import { Controller, Get, Post, Body, Patch, Param, NotFoundException } from '@nestjs/common';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { QueryBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { plainToClass } from 'class-transformer';
 import { GetEmployeeQuery } from './queries/get-employee/get-employee.query';
+import { CreateEmployeeCommand } from './commands/create-employee/create-employee-command';
+import { CreateEmployeeDto } from './commands/create-employee/create-employee.dto';
 
 @Controller('employees')
 export class EmployeesController {
-  constructor(private readonly queryBus: QueryBus) { }
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly commandBus: CommandBus
+  ) { }
 
   @Post()
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return null;
+  async create(@Body() dto: CreateEmployeeDto) {
+    const command = plainToClass(CreateEmployeeCommand, dto);
+    const id = await this.commandBus.execute(command);
+    const query = plainToClass(GetEmployeeQuery, { id });
+
+    return this.queryBus.execute(query);
   }
 
   @Get(':id')
@@ -26,7 +34,7 @@ export class EmployeesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateEmployeeDto) {
     return null;
   }
 

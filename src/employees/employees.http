@@ -1,2 +1,12 @@
 ### get employee
 GET http://localhost:3000/employees/1
+
+### creat employee
+POST http://localhost:3000/employees/
+Content-Type: application/json
+
+{
+  "name": "Mr. Employee",
+  "managerId": 2,
+  "contactInfo": {"email": "employee@acme.com", "phone": "12314"}
+}
