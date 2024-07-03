@@ -20,3 +20,11 @@ Content-Type: application/json
   "managerId": 1,
   "contactInfo": {"email": "changed-employee@acme.com", "phone": "32153"}
 }
+
+###assign manager
+PATCH http://localhost:3000/employees/3/assign-manager
+Content-Type: application/json
+
+{
+  "managerId": 1
+}
