@@ -28,3 +28,13 @@ Content-Type: application/json
 {
   "managerId": 2
 }
+
+### payment webhook
+POST http://localhost:3000/employees/webhooks/payment
+Content-Type: application/json
+
+{
+  "id": "12039819023809123",
+  "status": "paid",
+  "amount": 150
+}

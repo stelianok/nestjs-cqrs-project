@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, NotFoundException, HttpCode } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { plainToClass } from 'class-transformer';
 import { GetEmployeeQuery } from './queries/get-employee/get-employee.query';
@@ -8,12 +8,17 @@ import { UpdateEmployeeDto } from './commands/update-employee/update-employee.dt
 import { UpdateEmployeeCommand } from './commands/update-employee/update-employee.command';
 import { AssignManagerCommand } from './commands/assign-manager/assign-manager-command';
 import { AssignManagerDto } from './commands/assign-manager/assign-manager.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Controller('employees')
 export class EmployeesController {
   constructor(
     private readonly queryBus: QueryBus,
-    private readonly commandBus: CommandBus
+    private readonly commandBus: CommandBus,
+
+    @InjectQueue('webhooks')
+    private readonly webhooksQueue: Queue
   ) { }
 
   @Post()
@@ -66,6 +71,12 @@ export class EmployeesController {
     const query = plainToClass(GetEmployeeQuery, { id });
 
     return this.queryBus.execute(query);
+  }
+
+  @Post('webhooks/payment')
+  @HttpCode(204)
+  async processPaymentWebhook(@Body() dto: any) {
+    await this.webhooksQueue.add('process-payment', dto);
   }
 
 }

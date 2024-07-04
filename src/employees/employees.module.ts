@@ -9,15 +9,22 @@ import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
 import { CommonModule } from 'src/common/common.module';
 import { BullModule } from '@nestjs/bull';
+import { QueueConsumers } from './queues';
 
 @Module({
   imports: [
     CqrsModule,
     BullModule.registerQueue({ name: 'employees' }),
+    BullModule.registerQueue({ name: 'webhooks' }),
     TypeOrmModule.forFeature([Employee, ContactInfo]),
     CommonModule
   ],
   controllers: [EmployeesController],
-  providers: [...QueryHandlers, ...CommandHandlers, ...EventHandlers],
+  providers: [
+    ...QueryHandlers,
+    ...CommandHandlers,
+    ...EventHandlers,
+    ...QueueConsumers,
+  ],
 })
 export class EmployeesModule { }
