@@ -18,7 +18,7 @@ import { ReportsModule } from './reports/reports.module';
     }),
     TypeOrmModule.forFeature([Task, Meeting]),
     EmployeesModule,
-    ReportsModule
+    ReportsModule,
   ],
   controllers: [],
   providers: [AppService],

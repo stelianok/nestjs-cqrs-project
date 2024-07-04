@@ -26,5 +26,5 @@ PATCH http://localhost:3000/employees/3/assign-manager
 Content-Type: application/json
 
 {
-  "managerId": 1
+  "managerId": 2
 }

@@ -5,12 +5,14 @@ import { DataSource } from "typeorm";
 import { UpdateEmployeeCommand } from "./update-employee.command";
 
 import { Employee } from "src/employees/entities/employee.entity";
+import { EntityEventsDispatcher } from "src/common/events/entity-events-dispatcher";
 
 @CommandHandler(UpdateEmployeeCommand)
 export class UpdateEmployeeHandler implements ICommandHandler<UpdateEmployeeCommand, number> {
   constructor(
     @InjectDataSource()
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
+    private readonly eventDispatcher: EntityEventsDispatcher
   ) {
 
   }
@@ -24,9 +26,13 @@ export class UpdateEmployeeHandler implements ICommandHandler<UpdateEmployeeComm
 
       if (!employee) return 0;
 
+      employee.managerId = command.managerId ?? null;
+
       db.merge(Employee, employee, command);
 
       await db.save(Employee, employee);
+
+      await this.eventDispatcher.dispatch(employee);
 
       return 1;
     })
