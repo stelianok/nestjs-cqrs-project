@@ -8,9 +8,15 @@ import { QueryHandlers } from './queries';
 import { CommandHandlers } from './commands';
 import { EventHandlers } from './events';
 import { CommonModule } from 'src/common/common.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
-  imports: [CqrsModule, TypeOrmModule.forFeature([Employee, ContactInfo]), CommonModule],
+  imports: [
+    CqrsModule,
+    BullModule.registerQueue({ name: 'employees' }),
+    TypeOrmModule.forFeature([Employee, ContactInfo]),
+    CommonModule
+  ],
   controllers: [EmployeesController],
   providers: [...QueryHandlers, ...CommandHandlers, ...EventHandlers],
 })
