@@ -1,0 +1,5 @@
+### list characters
+GET http://localhost:3000/star-wars/characters
+
+### get protagonist
+GET http://localhost:3000/star-wars/protagonist/
